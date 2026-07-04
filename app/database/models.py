@@ -1,4 +1,3 @@
-
 from datetime import datetime
 
 from sqlalchemy import Boolean
@@ -103,6 +102,21 @@ class File(Base):
         default=False,
     )
 
+    # -------- Synchronization --------
+
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    last_seen: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+    )
+
+    # -------- Audit --------
+
     indexed_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow,
@@ -119,6 +133,6 @@ class File(Base):
             f"<File("
             f"name='{self.name}', "
             f"category='{self.category}', "
-            f"mime='{self.mime_type}'"
+            f"deleted={self.is_deleted}"
             f")>"
         )

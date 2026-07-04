@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import select
 
 from app.database.models import File
@@ -23,10 +25,6 @@ class FileRepository:
         return file
 
     def update(self, existing: File, new: File):
-        """
-        Update an existing database record with
-        the latest metadata from Google Drive.
-        """
 
         existing.name = new.name
         existing.extension = new.extension
@@ -42,10 +40,34 @@ class FileRepository:
         existing.is_folder = new.is_folder
         existing.is_shortcut = new.is_shortcut
 
+        existing.last_seen = datetime.utcnow()
+        existing.is_deleted = False
+
         self.session.commit()
         self.session.refresh(existing)
 
         return existing
+
+    def touch(self, file: File):
+        file.last_seen = datetime.utcnow()
+        file.is_deleted = False
+        self.session.commit()
+
+    def mark_all_deleted(self):
+
+        files = self.get_all()
+
+        for file in files:
+            file.is_deleted = True
+
+        self.session.commit()
+
+    def restore(self, file: File):
+
+        file.is_deleted = False
+        file.last_seen = datetime.utcnow()
+
+        self.session.commit()
 
     def get_all(self):
         return self.session.scalars(

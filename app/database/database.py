@@ -17,12 +17,11 @@ engine = create_engine(
 
 def create_database():
     """
-    Create all tables defined in SQLAlchemy models.
+    Create tables if they don't already exist.
     """
 
-    # Import models so SQLAlchemy knows about them
     from app.database import models
 
     Base.metadata.create_all(bind=engine)
 
-    print("✅ Database created successfully!")
+    print("✅ Database ready!")
