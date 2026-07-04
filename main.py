@@ -1,25 +1,31 @@
+from app.database.database import create_database
 from app.drive.auth import authenticate
-from app.drive.scanner import connect, scan_folder
-from app.database.db import create_tables
+from app.drive.scanner import connect
+from app.indexer.drive_indexer import DriveIndexer
 
 
 def main():
+    print("=" * 50)
+    print("🚀 InstaOS Starting...")
+    print("=" * 50)
 
-    create_tables()
-    
-    print("Connecting to Google Drive...")
+    # Create database tables
+    create_database()
 
+    print("🔐 Authenticating with Google Drive...")
     creds = authenticate()
 
+    print("🔗 Connecting to Google Drive...")
     service = connect(creds)
 
-    print("✅ Connected!\n")
+    print("✅ Connected!")
 
-    print("\nScanning Google Drive...\n")
+    print("\n📂 Starting Indexer...\n")
 
-    scan_folder(service)
+    indexer = DriveIndexer(service)
+    indexer.scan()
 
-    print("\nScan Complete.")
+    print("\n🎉 Scan Finished Successfully!")
 
 
 if __name__ == "__main__":
