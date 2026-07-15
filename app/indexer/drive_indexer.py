@@ -8,6 +8,7 @@ class DriveIndexer:
     def __init__(self, service):
         self.service = service
         self.repository = FileRepository()
+        # Populated once when a scan starts, then used for every file lookup.
         self.file_cache = {}
 
         self.total_files = 0
@@ -20,6 +21,7 @@ class DriveIndexer:
 
     def scan(self):
         print("\nStarting Google Drive index...\n")
+        # One database read creates the cache for this complete scan.
         self.file_cache = self.repository.get_by_drive_id_map()
         print(f"Loaded {len(self.file_cache)} indexed files into memory")
 
@@ -57,6 +59,7 @@ class DriveIndexer:
 
         try:
             file = MetadataService.build_file(item, current_path)
+            # All per-file existence checks stay in memory after initialization.
             existing = self.file_cache.get(file.drive_file_id)
 
             if existing is None:

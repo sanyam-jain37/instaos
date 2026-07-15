@@ -29,7 +29,7 @@ class FileRepository:
         ).all()
 
     def get_by_drive_id_map(self) -> dict[str, File]:
-        """Load indexed files once for constant-time scanner lookups."""
+        """Build the once-per-scan cache used for constant-time lookups."""
         return {
             file.drive_file_id: file
             for file in self.get_all()
