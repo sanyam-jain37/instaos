@@ -7,16 +7,12 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv/
+
+# Secrets
 token.json
 credentials.json
 .env
-data/reels.db# Virtual environment
-.venv/
-
-# Python
-__pycache__/
-*.pyc
 
 # Local databases
 data/*.db
