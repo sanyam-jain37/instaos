@@ -36,6 +36,43 @@ class FileRepository:
             select(File).where(File.category == category)
         ).all()
 
+    def find_by_name(self, name: str) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.name.ilike(f"%{name}%"))
+        ).all()
+
+    def get_by_extension(self, extension: str) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.extension == extension)
+        ).all()
+
+    def get_by_mime_type(self, mime_type: str) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.mime_type == mime_type)
+        ).all()
+
+    def get_by_parent_drive_id(self, parent_drive_id: str) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.parent_drive_id == parent_drive_id)
+        ).all()
+
+    def get_recent(self, limit: int) -> list[File]:
+        return self.session.scalars(
+            select(File)
+            .order_by(File.modified_time.desc())
+            .limit(limit)
+        ).all()
+
+    def get_by_minimum_size(self, min_size: int) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.size >= min_size)
+        ).all()
+
+    def get_modified_after(self, date: datetime) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.modified_time > date)
+        ).all()
+
     def get_folders(self) -> list[File]:
         return self.session.scalars(
             select(File).where(File.is_folder.is_(True))
