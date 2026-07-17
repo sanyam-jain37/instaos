@@ -11,4 +11,22 @@ wheels/
 token.json
 credentials.json
 .env
-data/reels.db
+data/reels.db# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Local databases
+data/*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
