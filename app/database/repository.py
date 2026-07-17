@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.database.models import File
 from app.database.session import SessionLocal
@@ -16,17 +16,49 @@ class FileRepository:
     # Query Methods
     # -----------------------------
 
-    def get_by_drive_id(self, drive_file_id: str):
+    def get_by_id(self, asset_id: int) -> File | None:
+        return self.session.get(File, asset_id)
+
+    def get_by_drive_id(self, drive_file_id: str) -> File | None:
         return self.session.scalar(
             select(File).where(
                 File.drive_file_id == drive_file_id
             )
         )
 
-    def get_all(self):
+    def get_all(self) -> list[File]:
         return self.session.scalars(
             select(File)
         ).all()
+
+    def get_by_category(self, category: str) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.category == category)
+        ).all()
+
+    def get_folders(self) -> list[File]:
+        return self.session.scalars(
+            select(File).where(File.is_folder.is_(True))
+        ).all()
+
+    def count_all(self) -> int:
+        return self.session.scalar(
+            select(func.count()).select_from(File)
+        ) or 0
+
+    def count_by_category(self, category: str) -> int:
+        return self.session.scalar(
+            select(func.count())
+            .select_from(File)
+            .where(File.category == category)
+        ) or 0
+
+    def exists_by_drive_id(self, drive_file_id: str) -> bool:
+        return self.session.scalar(
+            select(File.id)
+            .where(File.drive_file_id == drive_file_id)
+            .limit(1)
+        ) is not None
 
     def get_by_drive_id_map(self) -> dict[str, File]:
         """Build the once-per-scan cache used for constant-time lookups."""
