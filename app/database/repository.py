@@ -78,6 +78,13 @@ class FileRepository:
             select(File).where(File.is_folder.is_(True))
         ).all()
 
+    def get_largest(self, limit: int) -> list[File]:
+        return self.session.scalars(
+            select(File)
+            .order_by(File.size.desc())
+            .limit(limit)
+        ).all()
+
     def count_all(self) -> int:
         return self.session.scalar(
             select(func.count()).select_from(File)
@@ -88,6 +95,25 @@ class FileRepository:
             select(func.count())
             .select_from(File)
             .where(File.category == category)
+        ) or 0
+
+    def count_folders(self) -> int:
+        return self.session.scalar(
+            select(func.count())
+            .select_from(File)
+            .where(File.is_folder.is_(True))
+        ) or 0
+
+    def count_deleted(self) -> int:
+        return self.session.scalar(
+            select(func.count())
+            .select_from(File)
+            .where(File.is_deleted.is_(True))
+        ) or 0
+
+    def sum_size(self) -> int:
+        return self.session.scalar(
+            select(func.coalesce(func.sum(File.size), 0))
         ) or 0
 
     def exists_by_drive_id(self, drive_file_id: str) -> bool:
