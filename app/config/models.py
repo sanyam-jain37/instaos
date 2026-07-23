@@ -57,10 +57,6 @@ class StorageBackend(str, Enum):
     S3 = "s3"
     GOOGLE_DRIVE = "google_drive"
 
-
-
-    """Application identity and process-level configuration."""
-
 class ApplicationConfig(ConfigurationModel):
     """Application identity and process-level configuration."""
 
