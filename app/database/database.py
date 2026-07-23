@@ -16,11 +16,10 @@ engine = create_engine(
 
 
 def create_database():
-    """
-    Create tables if they don't already exist.
-    """
+    """Create all database tables if they don't already exist."""
 
-    from app.database import models
+    # Import models so SQLAlchemy registers them before create_all()
+    from app.database import models as _models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
 
